@@ -39,7 +39,7 @@
         //La funcion next obtiene los datos de un servicio
         function next() {
           var jsondata = new Object();
-          $.getJSON('http://localhost:8088/ner?callback=?',function(json){
+          $.getJSON('http://localhost:8088/data?callback=?',function(json){
             jsondata.value= parseFloat(json.value);
             jsondata.time= json.time;
           });
