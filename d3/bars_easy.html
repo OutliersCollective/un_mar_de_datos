@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <style>
+
+  body
+  {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;;
+    text-rendering: optimizeLegibility;
+    margin: 30px 30px 30px 30px;
+
+  }
+
+  h1
+  {
+    font-size: 40px;
+    font-weight: 300;
+    letter-spacing: -2px;
+    margin: .3em 0 .1em 0;
+  }
+
+  </style>
+  <head>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+  </head>
+  <body>
+
+    <div id="titulo">
+      <h1> D3.js: Ejemplo de Barras estáticas </h1>
+    </div>
+    <div class="content" style="margin-top:50px;"></div>
+    <script type='text/javascript'>
+
+        var data = [5,4,7,2,5,7,2,1,5,8,4,2,6,2,2,6,3,6,5,4,7,2,5,7,2,1,5,8,4,2,6,2,2]; // Dataset fijo
+
+
+        console.log(data);
+
+    </script>
+
+
+    <script type='text/javascript'>
+
+        //Inicializamos las variables de ancho de columna, altura y espacio de separacion entre lineas
+        var w = 20,
+            h = 80;
+            BAR_SPACING = 5;
+        
+        //Definimos las escalas
+        var x = d3.scale.linear()
+            .domain([0, data.length])
+            .range([0, w*data.length]);
+        
+        var y = d3.scale.linear()
+            .domain([0, 8])
+            .rangeRound([0, h]);
+
+    </script>
+
+    <script type='text/javascript'>
+
+
+        //Creamos el contenedor SVG asociado al div con class=content
+        var chart1 = d3.select(".content").append("svg")
+            .attr("class", "chart")
+            .attr("width", w * data.length)
+            .attr("height", h);
+        
+        //Añadimos una barra para cada entrada de data
+        chart1.selectAll("rect")
+            .data(data)
+          .enter().append("rect")
+            .attr("x", function(d, i) { console.log("x");console.log(x(i));return x(i);})
+            .attr("y", function(d) { console.log("y");console.log(h - y(d));return h - y(d); })
+            .attr("width", w-BAR_SPACING)
+            .attr("height", function(d) { return y(d); })
+            .style("fill","#668");
+
+
+    </script>
+
+  </body>
+</html>

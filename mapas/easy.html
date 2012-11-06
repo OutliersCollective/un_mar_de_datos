@@ -1,0 +1,26 @@
+<meta charset="utf-8">
+<html>
+  <head>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4/leaflet.css" />
+     <script src="http://cdn.leafletjs.com/leaflet-0.4/leaflet.js"></script>
+  </head>
+  <body>
+    <div id="map" style="height:100%;">
+    </div>
+    <script type="text/javascript">
+        /*Creamos el mapa en el div*/
+        var map = L.map('map').setView([40.418889,-3.691944], 13);
+
+        /*Se eligen los tiles*/
+        L.tileLayer('http://{s}.tile.cloudmade.com/45efbfcdc46a46fdac145f8f7072797c/997/256/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+        }).addTo(map);
+
+
+        /*Dibujamos un marcador en estas coordenadas*/
+        L.marker([40.418889, -3.691944]).addTo(map).bindPopup('Esto es un popup.').openPopup();
+
+    </script>
+  </body>
+
+</html>

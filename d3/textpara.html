@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <head>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var dataset=[1,2,3,4,5];
+      d3.select("body").selectAll("p")
+      .data(dataset)
+        .enter()
+        .append("p")
+        .text("¡Hola Mundo!");
+        //.text(function(d){return d;});
+        //.style("color", "red");
+        */.style("color",function(d){
+
+           if(d<3){return "blue";}
+           else{return "red";}
+
+         });*/
+    </script>
+  </body>
+</html>

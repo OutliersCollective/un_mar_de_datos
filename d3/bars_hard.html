@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <style>
+
+  body
+  {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;;
+    text-rendering: optimizeLegibility;
+    margin: 30px 30px 30px 30px;
+
+  }
+
+  h1
+  {
+    font-size: 40px;
+    font-weight: 300;
+    letter-spacing: -2px;
+    margin: .3em 0 .1em 0;
+  }
+
+  </style>
+  <head>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+  </head>
+  <body>
+    <div id="titulo">
+      <h1> D3.js: Ejemplo de Barras dinámicas alimentadas a través de servicio </h1>
+    </div>
+    <div id="content" class="content"></div>
+    <script type='text/javascript'>
+
+        var data = d3.range(33).map(next); // starting dataset
+     
+     
+        console.log(data);
+        
+        //La funcion next obtiene los datos de un servicio
+        function next() {
+          var jsondata = new Object();
+          $.getJSON('http://localhost:8088/ner?callback=?',function(json){
+            jsondata.value= parseFloat(json.value);
+            jsondata.time= json.time;
+          });
+          console.log(jsondata);
+          return jsondata;
+        }
+
+
+    </script>
+
+
+    <script type='text/javascript'>
+
+        var w = 20,
+            h = 80;
+            BAR_SPACING = 5;
+
+        var x = d3.scale.linear()
+            .domain([0, data.length])
+            .range([0, w * data.length]);
+        
+        var y = d3.scale.linear()
+            .domain([0, 8])
+            .rangeRound([0, h]);
+
+    </script>
+
+    <script type='text/javascript'>
+
+
+
+        var chart1 = d3.select(".content").append("svg")
+            .attr("class", "chart")
+            .attr("width", w * data.length)
+            .attr("height", h);
+        
+        chart1.selectAll("rect")
+            .data(data)
+          .enter().append("rect")
+            .attr("x", function(d, i) { console.log("x");console.log(x(i));return x(i); })
+            .attr("y", function(d) { console.log("y");console.log(h - y(d.value));return h - y(d.value); })
+            .attr("width", w-BAR_SPACING)
+            .attr("height", function(d) { return y(d); })
+            .style("fill","#668");
+        
+        
+        function redraw1() {
+        
+          chart1.selectAll("rect")
+              .data(data)
+            .transition()
+              .duration(1000)
+              .attr("y", function(d) { return h - y(d.value); })
+              .attr("height", function(d) { return y(d.value); });
+        
+        }
+        
+        redraw1();
+
+    </script>
+
+    <script type='text/javascript'>
+        //Estas lineas definen el redibujado tras n milisegundos
+        setInterval(function() {
+          data.shift();
+          data.push(next());
+          redraw1();
+          d3.timer.flush(); // avoid memory leak when in background tab
+        }, 1500);
+
+    </script>
+  </body>
+</html>

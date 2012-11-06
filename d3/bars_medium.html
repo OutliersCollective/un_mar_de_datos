@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <style>
+
+  body
+  {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;;
+    text-rendering: optimizeLegibility;
+    margin: 30px 30px 30px 30px;
+
+  }
+
+  h1
+  {
+    font-size: 40px;
+    font-weight: 300;
+    letter-spacing: -2px;
+    margin: .3em 0 .1em 0;
+  }
+
+  </style>
+  <head>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+  </head>
+  <body>
+    <div id="titulo">
+      <h1> D3.js: Ejemplo de Barras desde JSON con datos cambiantes </h1>
+    </div>
+    <div id="content" class="content"></div>
+    <script type="text/javascript">
+        var data = [1,1,1,1,1,1,1,1,1];
+    </script>
+    <script type='text/javascript'>
+        
+        var w = 20,
+            h = 80;
+            BAR_SPACING = 5;
+        
+        var x = d3.scale.linear()
+            .domain([0, data.length])
+            .range([0, w*data.length]);
+        
+        var y = d3.scale.linear()
+            .domain([0, 8])
+            .rangeRound([0, h]);
+
+        //Seleccionamos el contenedor, el div con class="content" y le añadimos el area del grafico
+        var chart1 = d3.select(".content").append("svg")
+            .attr("class", "chart")
+            .attr("width", w * data.length)
+            .attr("height", h);
+        
+        //Para cada entrada en data dibujaremos una barra
+        chart1.selectAll("rect")
+            .data(data)
+          .enter().append("rect")
+            .attr("x", function(d, i) { console.log("x");console.log(x(i));return x(i); })
+            .attr("y", function(d) { console.log("y");console.log(h - y(d));return h - y(d); })
+            .attr("width", w-BAR_SPACING)
+            .attr("height", function(d) { return y(d); })
+            .style("fill","#668");
+        
+        get_data();
+
+        function get_data() {
+
+          $.getJSON('./barsData.json',function(json_data){
+                 redraw1(json_data);
+             });
+        }
+        
+        //Aqui redibujamos el grafico con el contenido de data
+        function redraw1(redata) {
+        
+          
+          chart1.selectAll("rect")
+              .data(redata)
+            .transition()
+              .duration(4000)
+              .attr("y", function(d) { return h - y(d); })
+              .attr("height", function(d) { return y(d); })
+
+          //chart1.selectAll("rect")
+              //.data(redata)
+              //.exit().remove();
+        }
+        
+
+    </script>
+
+  </body>
+</html>
