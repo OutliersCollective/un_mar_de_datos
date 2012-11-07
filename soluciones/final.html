@@ -1,0 +1,136 @@
+<html>
+
+     <style>
+         body
+         {
+           font-family: "Helvetica Neue", Helvetica, sans-serif;;
+           text-rendering: optimizeLegibility;
+           margin: 30px 30px 30px 30px;
+
+         }
+         .div-cont { position: relative; }
+         #bars {position: absolute; bottom: 30; left: 30;}
+
+     </style>
+  <head>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4/leaflet.css" />
+     <script src="http://cdn.leafletjs.com/leaflet-0.4/leaflet.js"></script>
+     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+
+     <script type="text/javascript">
+         var map;
+         var bars_data;
+     </script>
+
+
+     <script type="text/javascript">
+         var barsData = new Object();
+         var barsArray = [];
+         function drawBars(data){
+             $.each(data,function(index,element){
+                 var lang = element.lang;
+                 if(lang in barsData){
+                     barsData[lang]+=1;
+                 }
+                 else{
+                     barsData[lang]=1;
+                 }
+
+             });
+             $.each(barsData,function(clave,valor){
+                 barsArray.push({lang:clave,value:valor});
+
+             });
+             console.log("barsData");
+             console.log(barsArray);
+
+             var w = 30,
+                 h = 150,
+                 BAR_SPACING = 5;
+
+             var l = Object.keys(barsArray).length;
+
+             var x = d3.scale.linear()
+                 .domain([0, l])
+                 .range([0, w*l]);
+
+             var y = d3.scale.linear()
+                 .domain([0, 100])
+                 .rangeRound([0, h]);
+
+             var chart1 = d3.select(".bars").append("svg")
+                 .attr("class", "chart")
+                 .attr("width", w * l)
+                 .attr("height", h);
+
+             chart1.selectAll("rect")
+                 .data(barsArray)
+               .enter().append("rect")
+                 .attr("x", function(d, i) { console.log("x");console.log(x(i));return x(i);})
+                 .attr("y", function(d) { console.log("y");console.log(h - y(d.value));return h - y(d.value); })
+                 .attr("width", w-BAR_SPACING)
+                 .attr("height", function(d) { return y(d.value); })
+                 .style("fill","#668");
+
+             // Incluimos un texto para cada barra con el identificador de lenguaje
+             chart1.selectAll("text")
+                 .data(barsArray)
+               .enter().append("text")
+                 .attr("x", function(d, i) { console.log("x");console.log(x(i));return x(i);})
+                 .attr("y", function(d) { console.log("y");console.log(h - y(d.value));return h - y(d.value); })
+                 .attr("width", w-BAR_SPACING)
+                 .attr("height", function(d) { return y(5); })
+                 .text(function(d){return d.lang})
+                 .style("fill","#668");
+
+         }
+
+
+         // Funcion que dibujara los marcadores en funcion de nuestros datos
+         function draw(){
+             /*Creamos el mapa en el div*/
+             map = L.map('map');
+
+             //var myUrl="./geoData.json";
+             var myUrl='http://78.46.89.110/mardedatos/geoData.json';
+             $.getJSON(myUrl,function(data){
+                 console.log("data");
+                 console.log(data);
+                 drawBars(data);
+                 $.each(data,function(index,element){
+                     console.log(element);
+                     //console.log(index);
+                     var geoLatLong = [element.lat,element.long];
+                     var marker = L.marker(geoLatLong).addTo(map);
+                     marker.bindPopup(geoLatLong.toString());
+                     //console.log(marker.getLatLng());
+                     
+
+                 });
+
+
+
+             });
+             /*Se eligen los tiles*/
+             L.tileLayer('http://{s}.tile.cloudmade.com/45efbfcdc46a46fdac145f8f7072797c/997/256/{z}/{x}/{y}.png', {
+                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+             }).addTo(map);
+             map.setView([40.418889,-3.691944], 13);
+
+         }
+     </script>
+  </head>
+  <body>
+    <div id="div_cont" style="100%">
+        <div id="map" class="map" style="height:100%">
+        </div>
+        <div id="bars" class="bars" >
+        </div>
+    <div>
+    <script type="text/javascript">
+        window.onready=draw();
+    </script>
+  </body>
+
+</html>
